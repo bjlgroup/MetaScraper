@@ -1,9 +1,9 @@
 import urllib2
 import re
-import json
 import urlparse
 
 from bs4 import BeautifulSoup
+import html5lib
 
 is_array = lambda var: isinstance(var, (list, tuple))
 
@@ -14,12 +14,17 @@ class MetaScraper:
 		return html
 
 	def parse(self, url):
-		html = self.loadhtml(url)
+		data = {}
+
+		try:
+			html = self.loadhtml(url)
+		except:
+			data["error"] = "cannot load html from the provided url"
+			return data
 
 		# The default python parser is too strict for
 		# real-world html - html5lib is much more lenient
 		soup = BeautifulSoup(html,"html5lib")
-		data = {}
 
 		# OpenGraph has been around longer than Twitter Cards, so we'll start with that
 		for og_data in soup.findAll('meta', attrs={"property":re.compile("og(.*)")}):
@@ -103,6 +108,7 @@ class MetaScraper:
 
 		# Final tidy up - remove newlines and multiple spaces
 		for prop in data:
-			data[prop] = re.sub('[\n ]+', ' ', data[prop])
+			if data[prop] is not None:
+				data[prop] = re.sub("[\n ]+", " ", data[prop])
 
-		return json.dumps(data)
+		return data
