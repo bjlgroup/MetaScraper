@@ -27,7 +27,7 @@ class MetaScraper:
 		soup = BeautifulSoup(html,"html5lib")
 
 		# OpenGraph has been around longer than Twitter Cards, so we'll start with that
-		for og_data in soup.findAll('meta', attrs={"property":re.compile("og(.*)")}):
+		for og_data in soup.findAll('meta', attrs={"property":re.compile("og(.*)", re.IGNORECASE)}):
 			prop = og_data.get('property')[3:]
 			ctnt = og_data.get('content')
 
@@ -43,7 +43,7 @@ class MetaScraper:
 				data[prop] = data[prop][0] 
 
 		# Now let's fall back onto Twitter Cards - only overwrite, not append
-		for twitter_data in soup.findAll('meta', attrs={"name":re.compile("twitter(.*)")}):
+		for twitter_data in soup.findAll('meta', attrs={"name":re.compile("twitter(.*)", re.IGNORECASE)}):
 			prop = twitter_data.get('name')[8:]
 			ctnt = twitter_data.get('content')
 
