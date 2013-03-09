@@ -73,7 +73,7 @@ class MetaScraper:
 
 		if "description" not in data:
 			# The only reliable alternative is to try for a meta description
-			meta_desc = soup.find('meta', attrs={"name":"description"})
+			meta_desc = soup.find('meta', attrs={"name":re.compile("description", re.IGNORECASE)})
 			if meta_desc is not None:
 				data["description"] = meta_desc.get('content')		
 
